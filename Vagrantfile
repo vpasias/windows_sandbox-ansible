@@ -2,52 +2,72 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+  config.vagrant.plugins = "vagrant-reload"
 
   #ansible controller
-  config.vm.define "Ansible-Controller" do |ansible|
-    ansible.vm.box = "hashicorp/bionic64"
-    ansible.vm.network "private_network", ip: "172.16.10.55",
-      virtualbox__intnet: true
-    ansible.vm.hostname = "ansible-controller"
+  config.vm.define "ac" do |ansible|
+    ansible.vm.box = "generic/ubuntu2004"
+    ansible.vm.network "private_network", ip: "172.16.10.6", 
+      name: "vboxnet0", :adapter => 2
+    ansible.vm.hostname = "ac"
     ansible.vm.provider "virtualbox" do |vb|
       vb.gui = false
-      vb.name = "ansible"
-      vb.cpus = 1
-      vb.memory = 1024
+      vb.name = "ac"
+      vb.cpus = 2
+      vb.memory = 8192
     end
     ansible.vm.synced_folder "./Playbooks", "/home/vagrant/Playbooks"
     ansible.vm.provision "shell", path: "Scripts/Setup-Ansible.sh"
   end
 
   #windows 10 instance
-  config.vm.define "Windows-Box" do |win|
-    win.vm.box = "gusztavvargadr/windows-10"
-    win.vm.network "private_network", ip: "172.16.10.57",
-      virtualbox__intnet: true
-    win.vm.hostname = "win10"
-    win.vm.provider "virtualbox" do |vb|
+  config.vm.define "cl1" do |subconfig|
+    subconfig.vm.box = "gusztavvargadr/windows-10"
+    subconfig.vm.hostname = "cl1"
+    subconfig.vm.provider "virtualbox" do |vb|
       vb.gui = false
-      vb.name = "windows-box"
-      vb.cpus = 2
-      vb.memory = 2048
-    end
-    win.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
-  end
-
-
-  #domain controller server
-  config.vm.define "DC-Server" do |dc|
-    dc.vm.box = "gusztavvargadr/windows-server"
-    dc.vm.network "private_network", ip: "172.16.10.5",
-      virtualbox__intnet: true
-    dc.vm.hostname = "dc01"
-    dc.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.name = "dc-01"
+      vb.name = "cl1"
       vb.cpus = 2
       vb.memory = 4096
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
     end
-    dc.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
+    subconfig.vm.network "private_network", ip: "172.16.10.31", 
+      name: "vboxnet0", :adapter => 2
+#	    virtualbox__intnet: true  
+    subconfig.winrm.username = "vagrant"
+    subconfig.winrm.password = "vagrant"
+    subconfig.winrm.transport = :plaintext
+    subconfig.winrm.basic_auth_only = true 
+    subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
+    subconfig.vm.provision "shell",
+      run: "always",
+      inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
+  end
+
+  #domain controller server
+  config.vm.define "dc1" do |subconfig|
+    subconfig.vm.box = "gusztavvargadr/windows-server"
+    subconfig.vm.hostname = "dc1"
+    subconfig.vm.provider :virtualbox do |vb|
+      vb.gui = false
+      vb.name = "dc1"
+      vb.memory = 16*1024
+      vb.cpus = 4
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
+    end
+    subconfig.vm.network "private_network", ip: "172.16.10.2", 
+      name: "vboxnet0", :adapter => 2
+#	    virtualbox__intnet: true  
+    subconfig.winrm.username = "vagrant"
+    subconfig.winrm.password = "vagrant"
+    subconfig.winrm.transport = :plaintext
+    subconfig.winrm.basic_auth_only = true 
+    subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
+    subconfig.vm.provision "shell",
+      run: "always",
+      inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
   end
 
   #elastic server
