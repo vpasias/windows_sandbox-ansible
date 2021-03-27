@@ -1,9 +1,9 @@
 - hosts: dcs
   vars:
-    domain_name: "lab.example.local"
+    domain_name: "vipnet.local"
     local_admin: ".\administrator"
-    dc_password: "P@ssw0rd1!"
-    recovery_password: "P@ssw0rd1!"
+    dc_password: "vbdf123@VP"
+    recovery_password: "vbdf123@VP"
   tasks:
     - name: Set Admin Password
       win_user:
