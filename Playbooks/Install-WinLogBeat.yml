@@ -2,7 +2,7 @@
 - hosts: dcs
   become_method: runas
   vars:
-    ansible_become_password: 'P@ssw0rd1!'
+    ansible_become_password: 'vbdf123@VP'
   tasks:
     - name: Download WinLogBeat
       win_shell: |
