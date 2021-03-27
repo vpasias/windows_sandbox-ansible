@@ -1,0 +1,159 @@
+chmod +x cloudlab-setup-ubuntu-tl.sh && ./cloudlab-setup-ubuntu-tl.sh && \
+sudo apt-get install libvirt-bin genisoimage libguestfs-tools libosinfo-bin virtinst qemu-kvm git vim net-tools wget curl bash-completion python-pip libvirt-daemon-system virt-manager bridge-utils libnss-libvirt libvirt-clients osinfo-db-tools intltool sshpass -y && \
+sudo sed -i 's/hosts:          files dns/hosts:          files libvirt libvirt_guest dns/' /etc/nsswitch.conf && sudo lsmod | grep kvm && sudo reboot
+#sudo systemctl restart libvirtd && sudo systemctl status libvirtd
+
+screen
+# Press Return to continue
+# detach from session without killing it: Ctrl a d 
+# to see screen sessions: screen -ls
+# detach from closed session: screen -d -r 1962.pts-0.node0
+# enter session: screen -r 1962.pts-0.node0
+# exit a session and terminate it: exit
+
+sudo -i
+
+# Create OS node VMs
+mkdir -p /mnt/extra/ws && cd /mnt/extra/ws
+
+curl -fsSL http://bit.ly/initVagrant | PROVIDER=virtualbox bash
+vagrant -v && vboxmanage -V
+vboxmanage setproperty machinefolder /mnt/extra/libvirt/ && vboxmanage list systemproperties | grep folder && VBoxManage list hostonlyifs
+
+#VBoxManage hostonlyif remove vboxnet0
+VBoxManage hostonlyif create
+VBoxManage hostonlyif ipconfig "vboxnet0" --ip 172.16.10.1 --netmask 255.255.255.0 && VBoxManage list hostonlyifs
+
+##################################################################################################################################################################
+### Deploying a Windows sandbox using Vagrant and Ansible ################################################################################
+### (https://ldvargas.medium.com/automating-labs-with-devops-tools-github-66100ef3264) ########################################
+### (https://github.com/vpasias/windows_sandbox-ansible) ####################################################################################################
+##################################################################################################################################################################
+
+su - iason
+
+sudo adduser `id -un` vboxusers
+
+git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_sandbox-ansible
+
+vagrant up
+
+# vagrant up ac dc1
+# vagrant up es cl1 cs1 cs2 cs3 ss1
+
+# 3389 -> localhost:33389
+# URL: localhost:3389
+# 2200 -> localhost:2200
+# URL: localhost:2200
+# 2204 -> localhost:2204
+# URL: localhost:2204
+# 2208 -> localhost:2208
+# URL: localhost:2208
+# 2212 -> localhost:2212
+# URL: localhost:2212
+
+vagrant status
+
+vagrant ssh ac
+
+ansible --version
+
+ls Playbooks/
+
+ansible-playbook Playbooks/Install-AD.yml
+
+# To join Active Directory: Change DNS server to: 172.16.10.2 to CS1/CS2/CS3/SS1 and restart each one.
+# shutdown /r
+# Add Default Gateway: 172.16.10.2
+# route add 0.0.0.0 mask 0.0.0.0 172.16.10.1
+
+### Install WSFC
+# On CS1/CS2/CS3 PowerShell window
+# https://www.server-world.info/en/note?os=Windows_Server_2019&p=wsfc&f=1
+Install-WindowsFeature Failover-Clustering -IncludeManagementTools
+Restart-Computer -Force
+
+### Configure iSCSI Target - Configure Shared storage
+# On SS1 PowerShell window
+# https://www.server-world.info/en/note?os=Windows_Server_2019&p=wsfc&f=2
+# https://www.server-world.info/en/note?os=Windows_Server_2019&p=iscsi&f=1
+Install-WindowsFeature FS-iSCSITarget-Server -IncludeManagementTools
+Restart-Computer -Force
+
+New-IscsiServerTarget -TargetName "iSCSITarget01" -InitiatorId @("IPAddress:192.168.11.10","IPAddress:192.168.11.11","IPAddress:192.168.11.12")
+New-IscsiVirtualDisk -Path "C:\iSCSIDisk\Quorum01.vhdx" -SizeBytes 512MB
+New-IscsiVirtualDisk -Path "C:\iSCSIDisk\Disk01.vhdx" -SizeBytes 30GB
+
+Add-IscsiVirtualDiskTargetMapping -TargetName "iSCSITarget01" -Path "C:\iSCSIDisk\Quorum01.vhdx"
+Add-IscsiVirtualDiskTargetMapping -TargetName "iSCSITarget01" -Path "C:\iSCSIDisk\Disk01.vhdx"
+
+Set-IscsiServerTarget -TargetName "iSCSITarget01" -EnableChap $True -Chap (New-Object PSCredential("username", (ConvertTo-SecureString -AsPlainText "UserP@ssw0rd01" -Force))) -PassThru
+
+Get-IscsiServerTarget -TargetName "iSCSITarget01"
+Restart-Service -Name WinTarget
+
+# On CS1/CS2/CS3 PowerShell window
+# https://www.server-world.info/en/note?os=Windows_Server_2019&p=wsfc&f=2
+Start-Service -Name MSiSCSI
+Set-Service -Name MSiSCSI -StartupType Automatic
+New-IscsiTargetPortal -TargetPortalAddress "192.168.11.13"
+Get-IscsiTarget
+# NodeAddress: iqn.1991-05.com.microsoft:ss1-iscsitarget01-target
+
+Connect-IscsiTarget -NodeAddress iqn.1991-05.com.microsoft:ss1-iscsitarget01-target -AuthenticationType ONEWAYCHAP -ChapUsername "username" -ChapSecret "UserP@ssw0rd01" -IsPersistent $True
+
+Get-IscsiConnection
+
+# On CS1 PowerShell window
+# https://www.server-world.info/en/note?os=Windows_Server_2019&p=wsfc&f=2
+
+Get-Disk | Format-Table -AutoSize -Wrap
+Set-Disk -Number 1 -IsOffline $False
+Set-Disk -Number 2 -IsOffline $False
+Initialize-Disk -Number 1 -PartitionStyle GPT
+Initialize-Disk -Number 2 -PartitionStyle GPT
+
+New-Partition -DiskNumber 1 -UseMaximumSize -AssignDriveLetter
+New-Partition -DiskNumber 2 -UseMaximumSize -AssignDriveLetter
+
+Format-Volume -DriveLetter E -FileSystem NTFS -Force
+Format-Volume -DriveLetter F -FileSystem NTFS -Force
+
+### Configure Cluster
+# On CS1 PowerShell window
+# https://www.server-world.info/en/note?os=Windows_Server_2019&p=wsfc&f=4
+# Remove Default Gateway: 10.0.2.2 - Add Default Gateway: 192.168.11.2
+# route add 0.0.0.0 mask 0.0.0.0 192.168.11.1
+
+Test-Cluster -Node "CS1", "CS2", "CS3"
+
+New-Cluster -Name Cluster01 -Node "CS1", "CS2", "CS3" -AdministrativeAccessPoint ActiveDirectoryAndDns -StaticAddress 192.168.11.5 -IgnoreNetwork 10.0.2.0/24
+#New-Cluster -Name Cluster01 -Node "CS1", "CS2", "CS3" -AdministrativeAccessPoint ActiveDirectoryAndDns -IgnoreNetwork 10.0.2.0/24
+#New-Cluster -Name Cluster01 -Node "CS1", "CS2", "CS3" -AdministrativeAccessPoint ActiveDirectoryAndDns -StaticAddress 192.168.11.5
+
+Get-Cluster | Format-List -Property * | more
+
+# Access the cluster
+ssh Administrator@192.168.11.5
+
+powershell
+Get-ClusterNode
+hostname
+Get-Volume
+
+# Test cluster failover
+Restart-Computer -Force
+exit
+
+ssh Administrator@192.168.11.5
+
+powershell
+Get-ClusterNode
+hostname
+Get-Volume
+
+########################################################################################################################################################################
+#################### Delete ##########################################################################################
+########################################################################################################################################################################
+
+vagrant destroy -f && vagrant status && vagrant global-status
