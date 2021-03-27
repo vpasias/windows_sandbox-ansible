@@ -4,7 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vagrant.plugins = "vagrant-reload"
 
-  #ansible controller
+  #Ansible controller
   config.vm.define "ac" do |ansible|
     ansible.vm.box = "generic/ubuntu2004"
     ansible.vm.network "private_network", ip: "172.16.10.6", 
@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
     ansible.vm.provision "shell", path: "Scripts/Setup-Ansible.sh"
   end
 
-  #windows 10 instance
+  #Windows 10 client instance
   config.vm.define "cl1" do |subconfig|
     subconfig.vm.box = "gusztavvargadr/windows-10"
     subconfig.vm.hostname = "cl1"
@@ -45,7 +45,7 @@ Vagrant.configure("2") do |config|
       inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
   end
 
-  #domain controller server
+  #Domain Controller 1
   config.vm.define "dc1" do |subconfig|
     subconfig.vm.box = "gusztavvargadr/windows-server"
     subconfig.vm.hostname = "dc1"
@@ -70,15 +70,15 @@ Vagrant.configure("2") do |config|
       inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
   end
 
-  #elastic server
-  config.vm.define "Elastic-Server" do |elastic|
-    elastic.vm.box = "hashicorp/bionic64"
-    elastic.vm.network "private_network", ip: "172.16.10.10",
-      virtualbox__intnet: true
-    elastic.vm.hostname = "elastic"
+  #Elastic server
+  config.vm.define "es" do |elastic|
+    elastic.vm.box = "generic/ubuntu2004"
+    elastic.vm.network "private_network", ip: "172.16.10.8",
+      name: "vboxnet0", :adapter => 2
+    elastic.vm.hostname = "es"
     elastic.vm.provider "virtualbox" do |vb|
       vb.gui = false
-      vb.name = "elastic-server"
+      vb.name = "es"
       vb.cpus = 2
       vb.memory = 4096
     end
@@ -87,8 +87,8 @@ Vagrant.configure("2") do |config|
   #kali instance
   config.vm.define "Kali-Box" do |kali|
     kali.vm.box = "kalilinux/rolling"
-    kali.vm.network "private_network", ip: "172.16.10.56",
-      virtualbox__intnet: true
+    kali.vm.network "private_network", ip: "172.16.10.9",
+      name: "vboxnet0", :adapter => 2
     kali.vm.hostname = "kali-box"
     kali.vm.provider "virtualbox" do |vb|
       vb.gui = true
@@ -102,6 +102,98 @@ Vagrant.configure("2") do |config|
       touch /home/vagrant/Desktop/ReadMe.txt
       wget -O /home/vagrant/Desktop/ReadMe.txt https://raw.githubusercontent.com/leonx3264/vagrant-lab-example/master/README.md
     SHELL
+  end
+
+  # Cluster Server 1
+  config.vm.define "cs1" do |subconfig|
+    subconfig.vm.box = "gusztavvargadr/windows-server"
+    subconfig.vm.hostname = "cs1"
+    subconfig.vm.provider :virtualbox do |vb|
+      vb.gui = false
+      vb.memory = 16*1024
+      vb.cpus = 4
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
+    end
+    subconfig.vm.network "private_network", ip: "172.16.10.10", 
+      name: "vboxnet0", :adapter => 2
+    subconfig.winrm.username = "vagrant"
+    subconfig.winrm.password = "vagrant"
+    subconfig.winrm.transport = :plaintext
+    subconfig.winrm.basic_auth_only = true
+    subconfig.vm.provision "shell",
+      run: "always",
+      inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
+    subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
+  end
+  
+  # Cluster Server 2
+  config.vm.define "cs2" do |subconfig|
+    subconfig.vm.box = "gusztavvargadr/windows-server"
+    subconfig.vm.hostname = "cs2"
+    subconfig.vm.provider :virtualbox do |vb|
+      vb.gui = false
+      vb.memory = 16*1024
+      vb.cpus = 4
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
+    end
+    subconfig.vm.network "private_network", ip: "172.16.10.11", 
+      name: "vboxnet0", :adapter => 2
+    subconfig.winrm.username = "vagrant"
+    subconfig.winrm.password = "vagrant"
+    subconfig.winrm.transport = :plaintext
+    subconfig.winrm.basic_auth_only = true
+    subconfig.vm.provision "shell",
+      run: "always",
+      inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
+    subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
+  end
+  
+  # Cluster Server 3
+  config.vm.define "cs3" do |subconfig|
+    subconfig.vm.box = "gusztavvargadr/windows-server"
+    subconfig.vm.hostname = "cs3"
+    subconfig.vm.provider :virtualbox do |vb|
+      vb.gui = false
+      vb.memory = 16*1024
+      vb.cpus = 4
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
+    end
+    subconfig.vm.network "private_network", ip: "172.16.10.12", 
+      name: "vboxnet0", :adapter => 2
+    subconfig.winrm.username = "vagrant"
+    subconfig.winrm.password = "vagrant"
+    subconfig.winrm.transport = :plaintext
+    subconfig.winrm.basic_auth_only = true
+    subconfig.vm.provision "shell",
+      run: "always",
+      inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
+    subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
+  end
+
+  # Storage Server 1
+  config.vm.define "ss1" do |subconfig|
+    subconfig.vm.box = "gusztavvargadr/windows-server"
+    subconfig.vm.hostname = "ss1"
+    subconfig.vm.provider :virtualbox do |vb|
+      vb.gui = false
+      vb.memory = 16*1024
+      vb.cpus = 4
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
+    end
+    subconfig.vm.network "private_network", ip: "172.16.10.13", 
+      name: "vboxnet0", :adapter => 2
+    subconfig.winrm.username = "vagrant"
+    subconfig.winrm.password = "vagrant"
+    subconfig.winrm.transport = :plaintext
+    subconfig.winrm.basic_auth_only = true
+    subconfig.vm.provision "shell",
+      run: "always",
+      inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
+    subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
   end
 
 end
