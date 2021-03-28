@@ -75,6 +75,8 @@ Vagrant.configure("2") do |config|
       vb.name = "es"
       vb.cpus = 2
       vb.memory = 4096
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
     end
   end
 
@@ -89,6 +91,8 @@ Vagrant.configure("2") do |config|
       vb.name = "kali-box"
       vb.cpus = 2
       vb.memory = 2048
+      vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
+      vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
     end
     kali.vm.provision "shell", inline: <<-SHELL
       mkdir /home/vagrant
