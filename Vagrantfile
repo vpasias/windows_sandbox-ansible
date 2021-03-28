@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
       vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
     end
     ansible.vm.synced_folder "./Playbooks", "/home/vagrant/Playbooks"
+    ansible.vm.synced_folder "./Ansible", "/home/vagrant/Ansible"
     ansible.vm.provision "shell", path: "Scripts/Setup-Ansible.sh"
   end
 
