@@ -9,11 +9,11 @@ Requirements:
   - 300GB Storage (min)
 
  Creates 9 Virtual Machines:
-  - Ansible Controller (Ubuntu with Ansible, Playbooks, and Hosts configured)
-  - Kali Box (Rolling Kali instance, GUI enabled by default)
+  - Ansible Controller (Ubuntu 20.04 with Ansible, Playbooks, and Hosts configured)
+  - IT Security Box (Rolling Kali instance)
   - Windows Box (Windows 10 instance, joined to domain)
   - DC Server (Windows 2019 instance, DC "vipnet.local")
-  - Elastic Server (Ubuntu with elastic stack, configured for winlogbeat)
+  - Elastic Server (Ubuntu 20.04 with elastic stack, configured for winlogbeat)
   - 3 Cluster Servers
   - 1 Storage Server
 
@@ -22,7 +22,7 @@ Addresses:
   - cl1.vipnet.local:         172.16.10.31
   - dc1.vipnet.local:         172.16.10.2
   - es:                       172.16.10.8
-  - kali-box:                 172.16.10.9
+  - itsec:                    172.16.10.29
   - cs1:                      172.16.10.10
   - cs2:                      172.16.10.11
   - cs3:                      172.16.10.12
