@@ -62,9 +62,9 @@ ansible --version
 
 ls Playbooks/
 
-git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_sandbox-ansible
+git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_sandbox-ansible/Ansible
 
-ansible-playbook /home/vagrant/Playbooks/Install-AD.yml -i Ansible/hosts 
+ansible-playbook /home/vagrant/Playbooks/Install-AD.yml -i hosts 
 
 # To join Active Directory: Change DNS server to: 172.16.10.2 to CS1/CS2/CS3/SS1 and restart each one.
 # shutdown /r
