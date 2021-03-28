@@ -36,6 +36,8 @@ sudo adduser `id -un` vboxusers
 
 git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_sandbox-ansible
 
+vagrant status
+
 vagrant up
 
 # vagrant up ac dc1
