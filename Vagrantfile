@@ -90,7 +90,7 @@ Vagrant.configure("2") do |config|
       vb.gui = false
       vb.name = "itsec"
       vb.cpus = 2
-      vb.memory = 2048
+      vb.memory = 4096
       vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
       vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
     end
