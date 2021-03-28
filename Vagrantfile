@@ -83,7 +83,7 @@ Vagrant.configure("2") do |config|
   #kali instance
   config.vm.define "itsec" do |kali|
     kali.vm.box = "kalilinux/rolling"
-    kali.vm.network "private_network", ip: "172.16.10.9",
+    kali.vm.network "private_network", ip: "172.16.10.29",
       name: "vboxnet0", :adapter => 2
     kali.vm.hostname = "itsec"
     kali.vm.provider "virtualbox" do |vb|
