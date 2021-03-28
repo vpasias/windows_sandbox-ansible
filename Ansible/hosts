@@ -10,7 +10,7 @@
 
 [kali]
 
-kali-box ansible_host=172.16.10.9
+itsec ansible_host=172.16.10.29
 
 [kali:vars]
 
