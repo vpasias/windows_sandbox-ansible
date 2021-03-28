@@ -81,14 +81,14 @@ Vagrant.configure("2") do |config|
   end
 
   #kali instance
-  config.vm.define "Kali-Box" do |kali|
+  config.vm.define "itsec" do |kali|
     kali.vm.box = "kalilinux/rolling"
     kali.vm.network "private_network", ip: "172.16.10.9",
       name: "vboxnet0", :adapter => 2
-    kali.vm.hostname = "kali-box"
+    kali.vm.hostname = "itsec"
     kali.vm.provider "virtualbox" do |vb|
-      vb.gui = true
-      vb.name = "kali-box"
+      vb.gui = false
+      vb.name = "itsec"
       vb.cpus = 2
       vb.memory = 2048
       vb.customize ['modifyvm', :id, '--nested-hw-virt', 'on']
@@ -98,7 +98,7 @@ Vagrant.configure("2") do |config|
       mkdir /home/vagrant
       mkdir /home/vagrant/Desktop
       touch /home/vagrant/Desktop/ReadMe.txt
-      wget -O /home/vagrant/Desktop/ReadMe.txt https://raw.githubusercontent.com/leonx3264/vagrant-lab-example/master/README.md
+      wget -O /home/vagrant/Desktop/ReadMe.txt https://raw.githubusercontent.com/vpasias/windows_sandbox-ansible/master/README.md
     SHELL
   end
 
