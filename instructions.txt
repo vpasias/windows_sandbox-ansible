@@ -34,6 +34,8 @@ su - iason
 
 sudo adduser `id -un` vboxusers
 
+vagrant plugin install vagrant-reload
+
 git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_sandbox-ansible
 
 vagrant status
