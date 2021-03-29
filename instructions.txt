@@ -69,6 +69,7 @@ ls Playbooks/
 
 git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_sandbox-ansible/Ansible
 
+# Create AD
 ansible-playbook /home/vagrant/Playbooks/Install-AD.yml -i hosts
 
 vagrant ssh dc1
@@ -77,7 +78,8 @@ whoami /groups
 gpresult /V
 net user /domain "administrator"
 
-ansible-playbook /home/vagrant/Playbooks/Join-AD.yml -i hosts
+# Clients to Join AD
+ansible-playbook /home/vagrant/Playbooks/Join_AD-cl.yml -i hosts
 
 # To join Active Directory: Change DNS server to: 172.16.10.2 to CS1/CS2/CS3/SS1 and restart each one.
 # shutdown /r
