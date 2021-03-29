@@ -48,16 +48,9 @@ vagrant up cs1 cs2 cs3 ss1 cl1 itsec
 
 # 3389 -> localhost:33389
 # URL: localhost:3389
-# 2200 -> localhost:2200
-# URL: localhost:2200
-# 2204 -> localhost:2204
-# URL: localhost:2204
-# 2208 -> localhost:2208
-# URL: localhost:2208
-# 2212 -> localhost:2212
-# URL: localhost:2212
-# 2216 -> localhost:2216
-# URL: localhost:2216
+
+# Find guest ports:
+# vagrant port cl1
 
 vagrant status
 
@@ -65,12 +58,10 @@ vagrant ssh ac
 
 ansible --version
 
-ls Playbooks/
-
 git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_sandbox-ansible/Ansible
 
 # Create AD
-ansible-playbook /home/vagrant/Playbooks/Install-AD.yml -i hosts
+ansible-playbook /home/vagrant/windows_sandbox-ansible/Playbooks/Install-AD.yml -i hosts
 
 vagrant ssh dc1
 
@@ -79,8 +70,14 @@ gpresult /V
 net user /domain "administrator"
 
 # Clients to Join AD
+# https://www.ntweekly.com/2020/10/09/update-windows-dns-settings-with-ansible/
 # https://www.ntweekly.com/2020/10/15/join-a-windows-machine-to-active-directory-with-ansible/
-ansible-playbook /home/vagrant/Playbooks/Join_AD-cl.yml -i hosts
+
+ansible-playbook /home/vagrant/windows_sandbox-ansible/Playbooks/Install-dns-cl.yml -i hosts
+ansible-playbook /home/vagrant/windows_sandbox-ansible/Playbooks/Join_AD-cl.yml -i hosts
+
+vagrant ssh cl1
+ipconfig /all
 
 # To join Active Directory: Change DNS server to: 172.16.10.2 to CS1/CS2/CS3/SS1 and restart each one.
 # shutdown /r
