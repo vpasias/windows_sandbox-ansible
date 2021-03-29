@@ -97,7 +97,7 @@ Restart-Computer -Force
 Install-WindowsFeature FS-iSCSITarget-Server -IncludeManagementTools
 Restart-Computer -Force
 
-New-IscsiServerTarget -TargetName "iSCSITarget01" -InitiatorId @("IPAddress:192.168.11.10","IPAddress:192.168.11.11","IPAddress:192.168.11.12")
+New-IscsiServerTarget -TargetName "iSCSITarget01" -InitiatorId @("IPAddress:172.16.10.10","IPAddress:172.16.10.11","IPAddress:172.16.10.12")
 New-IscsiVirtualDisk -Path "C:\iSCSIDisk\Quorum01.vhdx" -SizeBytes 512MB
 New-IscsiVirtualDisk -Path "C:\iSCSIDisk\Disk01.vhdx" -SizeBytes 30GB
 
@@ -113,7 +113,7 @@ Restart-Service -Name WinTarget
 # https://www.server-world.info/en/note?os=Windows_Server_2019&p=wsfc&f=2
 Start-Service -Name MSiSCSI
 Set-Service -Name MSiSCSI -StartupType Automatic
-New-IscsiTargetPortal -TargetPortalAddress "192.168.11.13"
+New-IscsiTargetPortal -TargetPortalAddress "172.16.10.13"
 Get-IscsiTarget
 # NodeAddress: iqn.1991-05.com.microsoft:ss1-iscsitarget01-target
 
@@ -139,19 +139,19 @@ Format-Volume -DriveLetter F -FileSystem NTFS -Force
 ### Configure Cluster
 # On CS1 PowerShell window
 # https://www.server-world.info/en/note?os=Windows_Server_2019&p=wsfc&f=4
-# Remove Default Gateway: 10.0.2.2 - Add Default Gateway: 192.168.11.2
-# route add 0.0.0.0 mask 0.0.0.0 192.168.11.1
+# Remove Default Gateway: 10.0.2.2 - Add Default Gateway: 172.16.10.2
+# route add 0.0.0.0 mask 0.0.0.0 172.16.10.1
 
 Test-Cluster -Node "CS1", "CS2", "CS3"
 
-New-Cluster -Name Cluster01 -Node "CS1", "CS2", "CS3" -AdministrativeAccessPoint ActiveDirectoryAndDns -StaticAddress 192.168.11.5 -IgnoreNetwork 10.0.2.0/24
+New-Cluster -Name Cluster01 -Node "CS1", "CS2", "CS3" -AdministrativeAccessPoint ActiveDirectoryAndDns -StaticAddress 172.16.10.5 -IgnoreNetwork 10.0.2.0/24
 #New-Cluster -Name Cluster01 -Node "CS1", "CS2", "CS3" -AdministrativeAccessPoint ActiveDirectoryAndDns -IgnoreNetwork 10.0.2.0/24
 #New-Cluster -Name Cluster01 -Node "CS1", "CS2", "CS3" -AdministrativeAccessPoint ActiveDirectoryAndDns -StaticAddress 192.168.11.5
 
 Get-Cluster | Format-List -Property * | more
 
 # Access the cluster
-ssh Administrator@192.168.11.5
+ssh Administrator@172.16.10.5
 
 powershell
 Get-ClusterNode
@@ -162,7 +162,7 @@ Get-Volume
 Restart-Computer -Force
 exit
 
-ssh Administrator@192.168.11.5
+ssh Administrator@172.16.10.5
 
 powershell
 Get-ClusterNode
