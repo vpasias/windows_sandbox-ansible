@@ -77,6 +77,8 @@ whoami /groups
 gpresult /V
 net user /domain "administrator"
 
+ansible-playbook /home/vagrant/Playbooks/Join-AD.yml -i hosts
+
 # To join Active Directory: Change DNS server to: 172.16.10.2 to CS1/CS2/CS3/SS1 and restart each one.
 # shutdown /r
 # Add Default Gateway: 172.16.10.2
