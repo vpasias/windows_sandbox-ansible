@@ -38,10 +38,11 @@ git clone https://github.com/vpasias/windows_sandbox-ansible.git && cd windows_s
 
 vagrant status
 
-vagrant up
+vagrant up dc1 ac es
 
-# vagrant up ac dc1
-# vagrant up es cl1 cs1 cs2 cs3 ss1
+vagrant up cs1 cs2 cs3 ss1 cl1 itsec
+
+# vagrant up
 
 # 3389 -> localhost:33389
 # URL: localhost:3389
@@ -53,6 +54,8 @@ vagrant up
 # URL: localhost:2208
 # 2212 -> localhost:2212
 # URL: localhost:2212
+# 2216 -> localhost:2216
+# URL: localhost:2216
 
 vagrant status
 
