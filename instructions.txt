@@ -79,6 +79,7 @@ gpresult /V
 net user /domain "administrator"
 
 # Clients to Join AD
+# https://www.ntweekly.com/2020/10/15/join-a-windows-machine-to-active-directory-with-ansible/
 ansible-playbook /home/vagrant/Playbooks/Join_AD-cl.yml -i hosts
 
 # To join Active Directory: Change DNS server to: 172.16.10.2 to CS1/CS2/CS3/SS1 and restart each one.
