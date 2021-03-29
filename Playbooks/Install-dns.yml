@@ -1,0 +1,10 @@
+---
+- name: "DNS"
+  hosts: windows
+  tasks:
+    - name: "Set DNS Client"
+      win_dns_client:
+          adapter_names: Ethernet 2
+          ipv4_addresses:
+          - 172.16.10.2
+          - 8.8.8.8
