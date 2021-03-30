@@ -1,5 +1,5 @@
  ---
-- name: "Install features"
+- name: "Install GPMC"
   hosts: windows
   tasks:
     - name: "Install GPMC"
