@@ -1,0 +1,15 @@
+- name: Windows | Create mapped drive with credentials and save the username and password
+  block:
+  - name: Windows | Save the network credentials required for the mapped drive
+    community.windows.win_credential:
+      name: server
+      type: domain_password
+      username: SandyUser
+      secret: put_your_password_here_or_use_vault
+      state: present
+
+  - name: Windows | Create a mapped drive that requires authentication
+    community.windows.win_mapped_drive:
+      letter: S
+      path: \\127.0.0.1\share
+      state: present
