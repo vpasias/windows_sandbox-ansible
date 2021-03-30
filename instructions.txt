@@ -86,6 +86,8 @@ net user /domain "administrator"
 ansible-playbook /home/vagrant/windows_sandbox-ansible/Playbooks/Install-dns-cl.yml -i hosts
 ansible-playbook /home/vagrant/windows_sandbox-ansible/Playbooks/Join_AD-cl.yml -i hosts
 
+ansible-galaxy collection install community.windows
+
 vagrant ssh cl1
 ipconfig /all
 
