@@ -1,0 +1,7 @@
+---
+- name: " Windows TimeZone"
+  hosts: windows
+  tasks:
+    - name: "Set the TimeZone"
+      win_timezone:
+         timezone: "US Eastern Standard Time"
