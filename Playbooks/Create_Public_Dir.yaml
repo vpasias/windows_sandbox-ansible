@@ -1,4 +1,5 @@
 - name: Windows | Create a public CIFS share
+  hosts: windows
   ansible.windows.win_share:
     name: "share"
     description: Windows share
