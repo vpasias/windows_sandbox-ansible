@@ -1,0 +1,7 @@
+---
+- name: "Restart hosts"
+  hosts: windows
+  tasks:
+    - name: "Restart Windows"
+      win_reboot:
+#     reboot_timeout: 60      
