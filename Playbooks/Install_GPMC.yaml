@@ -1,0 +1,8 @@
+ ---
+- name: "Install features"
+  hosts: windows
+  tasks:
+    - name: "Install GPMC"
+      win_feature:
+         name: GPMC
+         state: present
