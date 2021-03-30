@@ -1,5 +1,5 @@
 ---
-- name: "Chocolatey"
+- name: "Install Google Chrome"
   hosts: windows
   tasks:
     - name: Install Google Chrome
