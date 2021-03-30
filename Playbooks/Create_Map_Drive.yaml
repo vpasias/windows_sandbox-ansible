@@ -1,3 +1,5 @@
+# https://www.lisenet.com/2020/manage-windows-servers-with-ansible/
+---
 - name: Windows | Create mapped drive with credentials and save the username and password
   hosts: sts
   block:
