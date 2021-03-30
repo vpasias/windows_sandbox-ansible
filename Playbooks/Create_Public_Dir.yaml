@@ -1,0 +1,9 @@
+- name: Windows | Create a public CIFS share
+  ansible.windows.win_share:
+    name: "share"
+    description: Windows share
+    path: "C:/share"
+    list: yes
+    full: Administrators
+    read: Everyone
+    state: present
