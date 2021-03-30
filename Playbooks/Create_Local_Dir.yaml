@@ -1,0 +1,4 @@
+- name: Windows | Create a local directory
+  ansible.windows.win_file:
+    path: "C:/share"
+    state: directory
