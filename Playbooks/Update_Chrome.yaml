@@ -1,0 +1,9 @@
+---
+- name: "Update Google Chrome"
+  hosts: windows
+  tasks:
+    - name: Update Google Chrome
+      win_chocolatey:
+          name: googlechrome
+          state: latest
+          ignore_checksums: yes
