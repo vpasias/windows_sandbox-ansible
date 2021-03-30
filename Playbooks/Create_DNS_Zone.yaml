@@ -1,0 +1,9 @@
+- name: "ES DNS Zone"
+  hosts: dcs
+  tasks:
+    - name: "Create the ES DNS Zone"
+      community.windows.win_dns_zone:
+         name: es.vipnet.local
+         replication: domain
+         type: primary
+         state: present
