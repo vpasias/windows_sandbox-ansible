@@ -46,8 +46,18 @@ vagrant up cs1 cs2 cs3 ss1 cl1 itsec
 
 # vagrant up
 
-# 3389 -> localhost:33389
-# URL: localhost:3389
+# 9011 -> localhost:33389
+# URL: localhost:011
+# 9012 -> localhost:33389
+# URL: localhost:9012
+# 9013 -> localhost:33389
+# URL: localhost:9013
+# 9014 -> localhost:33389
+# URL: localhost:9014
+# 9015 -> localhost:33389
+# URL: localhost:9015
+# 9016 -> localhost:33389
+# URL: localhost:9016
 
 # Find guest ports:
 # vagrant port cl1
