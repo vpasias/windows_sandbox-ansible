@@ -1,0 +1,14 @@
+---
+-  name: "Create OU"
+   hosts: dsc
+   tasks:
+   - win_shell: install-packageprovider -name nuget -force
+   - name: "Install ActiveDirectoryDSC"
+     win_psmodule:
+        name: ActiveDirectoryDSC
+        state: present
+   - name: "Create AU"
+     win_dsc:
+        resource_name: ADOrganizationalUnit
+        name: "NewOU"
+        path:  "dc=corp, dc=enterprise, dc=local"
