@@ -1,4 +1,5 @@
 - name: Windows | Create mapped drive with credentials and save the username and password
+  hosts: sts
   block:
   - name: Windows | Save the network credentials required for the mapped drive
     community.windows.win_credential:
