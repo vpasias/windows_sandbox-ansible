@@ -5,8 +5,8 @@
     community.windows.win_credential:
       name: server
       type: domain_password
-      username: SandyUser
-      secret: put_your_password_here_or_use_vault
+      username: vagrant
+      secret: vagrant
       state: present
 
   - name: Windows | Create a mapped drive that requires authentication
