@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
     subconfig.vm.network "private_network", ip: "172.16.10.2", 
       name: "vboxnet0", :adapter => 2
 #	    virtualbox__intnet: true
+    subconfig.vm.network "forwarded_port", guest: 33389, host: 9011
     subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
     subconfig.vm.provision "shell",
       run: "always",
@@ -73,6 +74,7 @@ Vagrant.configure("2") do |config|
     end
     subconfig.vm.network "private_network", ip: "172.16.10.10", 
       name: "vboxnet0", :adapter => 2
+    subconfig.vm.network "forwarded_port", guest: 33389, host: 9012
     subconfig.vm.provision "shell",
       run: "always",
       inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
@@ -92,6 +94,7 @@ Vagrant.configure("2") do |config|
     end
     subconfig.vm.network "private_network", ip: "172.16.10.11", 
       name: "vboxnet0", :adapter => 2
+    subconfig.vm.network "forwarded_port", guest: 33389, host: 9013
     subconfig.vm.provision "shell",
       run: "always",
       inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
@@ -111,6 +114,7 @@ Vagrant.configure("2") do |config|
     end
     subconfig.vm.network "private_network", ip: "172.16.10.12", 
       name: "vboxnet0", :adapter => 2
+    subconfig.vm.network "forwarded_port", guest: 33389, host: 9014
     subconfig.vm.provision "shell",
       run: "always",
       inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
@@ -130,6 +134,7 @@ Vagrant.configure("2") do |config|
     end
     subconfig.vm.network "private_network", ip: "172.16.10.13", 
       name: "vboxnet0", :adapter => 2
+    subconfig.vm.network "forwarded_port", guest: 33389, host: 9015
     subconfig.vm.provision "shell",
       run: "always",
       inline: "route /p add 0.0.0.0 mask 0.0.0.0 172.16.10.1"
@@ -150,6 +155,7 @@ Vagrant.configure("2") do |config|
     end
     subconfig.vm.network "private_network", ip: "172.16.10.31", 
       name: "vboxnet0", :adapter => 2
+    subconfig.vm.network "forwarded_port", guest: 33389, host: 9016
 #	    virtualbox__intnet: true
     subconfig.vm.provision "shell", path: "Scripts/Setup-WinRM.ps1"
     subconfig.vm.provision "shell",
