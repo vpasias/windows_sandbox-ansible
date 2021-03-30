@@ -1,8 +1,11 @@
 ---
-- name: Update windows packages
-  win_updates:
-    category_names:
-      - CriticalUpdates
-      - SecurityUpdates
-    reboot: yes
-    reboot_timeout: 500
+- name: "Update windows packages"
+  hosts: windows
+  tasks:
+    - name: Update windows packages
+      win_updates:
+          category_names:
+          - CriticalUpdates
+          - SecurityUpdates
+      reboot: yes
+      reboot_timeout: 500
