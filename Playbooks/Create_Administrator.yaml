@@ -1,0 +1,9 @@
+- name: Windows | Create a user
+  ansible.windows.win_user:
+    name: admin
+    password: "vip888"
+    groups: Administrators
+    update_password: on_create
+    password_never_expires: yes
+    user_cannot_change_password: no
+    state: present
