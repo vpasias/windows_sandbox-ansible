@@ -1,4 +1,5 @@
 - name: Windows | Create a user
+  hosts: windows
   ansible.windows.win_user:
     name: admin
     password: "vip888"
