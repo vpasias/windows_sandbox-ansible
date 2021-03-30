@@ -1,4 +1,5 @@
 - name: Windows | Firewall rules to allow inbound traffic
+  hosts: windows
   community.windows.win_firewall_rule:
     name: HTTPS
     localport: 8443
