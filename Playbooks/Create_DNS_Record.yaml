@@ -1,10 +1,10 @@
 ---
 - name: "Create the ES DNS record"
-  hosts: dc
+  hosts: dcs
   tasks:
     - name: "Crerate A record"
       community.windows.win_dns_record:
          name: "testserver"
          type: "A"
-         value: "172.16.1.0.8"
+         value: "172.16.10.8"
          zone: "es.vipnet.local"
